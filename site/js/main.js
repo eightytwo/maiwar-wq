@@ -75,6 +75,35 @@ function configureRangeSlider() {
 }
 
 /**
+ * Reduce the measurement data to measurements per month per year. If a month has
+ * more than one measurement the greater measurement is used.
+ * @param {Object} data The measurement data keyed by YYYY-MM-DD.
+ * @returns {Object} Measurement data keyed by YYYY-MM.
+ */
+function reduceToMonths(data) {
+  let monthlyData = {};
+
+  Object.keys(data).forEach((date) => {
+    // From a date string (YYYY-MM-DD) build a key comprised of YYYY-MM
+    let dateKey = date.substring(0, date.lastIndexOf("-"));
+
+    if (dateKey in monthlyData) {
+      // Measurement data has already been found for this year/month so update
+      // the measurements with any values that are greater than those already found.
+      for (const [location, measurement] of Object.entries(monthlyData[dateKey])) {
+        if (data[date][location] > measurement) {
+          monthlyData[dateKey][location] = data[date][location];
+        }
+      }
+    } else {
+      monthlyData[dateKey] = data[date];
+    }
+  });
+
+  return monthlyData;
+}
+
+/**
  * Fetch the JSON measurement data.
  * @returns {Object} The measurement data as a JavaScript object.
  */
@@ -90,7 +119,7 @@ async function fetchMeasurementDataAsync() {
 
 // Kick everything off by fetching the measurement data
 fetchMeasurementDataAsync().then(data => {
-  measurementData = data;
-  dates = Object.keys(this.measurementData).sort();
+  measurementData = reduceToMonths(data);
+  dates = Object.keys(measurementData).sort();
   configureRangeSlider();
 });
