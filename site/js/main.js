@@ -8,17 +8,21 @@ const LEVELS = {
   '501': ['#ff6600', '#b24900'],
 };
 
+const MONTHS = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
+
 var measurementData;
-var dates;
+var years = new Set();
 
 /**
- * Determine the style information, namely the fill and stroke colour, for a
- * measurement.
+ * Determine the level of a measurement.
  * @param {Number} measurement A value representing a single measurement.
- * @returns {Array} An array containing the fill and stroke colours that represent
- * the measurement.
+ * @returns {Number} A key from the `LEVELS` dictionary representing the level
+ * of the measurement.
  */
-function styleForMeasurement(measurement) {
+function measurementLevel(measurement) {
   let levels = Object.keys(LEVELS).map((level) => Number(level)).sort()
   let currentLevel = levels[0];
 
@@ -28,26 +32,18 @@ function styleForMeasurement(measurement) {
     }
   });
 
-  return LEVELS[currentLevel];
+  return currentLevel;
 }
 
 /**
  * Handle the event when the date being viewed is changed.
- * @param {Number} dateIndex The index of the date selected by the range slider.
+ * @param {String} date The selected date in the format "YYYY-MM".
  */
-function handleDateChanged(dateIndex) {
-  const output = document.getElementById('output');
-
-  let currentDate = dates[dateIndex];
-
-  if (output) {
-    output.textContent = currentDate;
-  }
-
-  let locations = measurementData[currentDate];
+function handleDateChanged(date) {
+  let locations = measurementData[date];
   for (nextLocation in locations) {
-    let measurement = measurementData[currentDate][nextLocation];
-    let measurementStyle = styleForMeasurement(measurement);
+    let measurement = measurementData[date][nextLocation];
+    let measurementStyle = LEVELS[measurementLevel(measurement)];
     let locationMarker = document.getElementById('location-' + nextLocation);
 
     locationMarker.style.fill = measurementStyle[0];
@@ -56,21 +52,91 @@ function handleDateChanged(dateIndex) {
 }
 
 /**
- * Configure the range slider control.
+ * Determine the most common measurement level for a given month and year.
+ * @param {String} date A date as a string in the format "YYYY-MM".
+ * @returns {Number} The measurement level that occurs most frequently for
+ * the given date.
  */
-function configureRangeSlider() {
-  const maxValue = dates.length - 1;
-  const slider = document.getElementById('rangeSlider');
-  const output = document.getElementById('output');
+function mostCommonLevelForDate(date) {
+  // Not all dates have measurements
+  if (!(date in measurementData)) {
+    return null;
+  }
 
-  slider.setAttribute('max', maxValue);
-  slider.value = maxValue;
-  output.textContent = dates.slice(-1)[0];
+  // Get the measurements for the given date
+  const measurements = Object.values(measurementData[date]);
 
+  // Build a dictionary of level number and its frequency
+  let frequencies = measurements.reduce((frequencies, measurement) => {
+    const level = measurementLevel(measurement);
 
-  $('input[type="range"]').rangeslider({
-    polyfill: false,
-    onSlide: function(position, value) { handleDateChanged(value) },
+    if (level in frequencies) {
+        frequencies[level]++;
+    } else {
+        frequencies[level] = 1;
+    }
+
+    return frequencies;
+  }, {});
+
+  // Find the measurement level with the highest frequency
+  return Object.keys(frequencies).reduce(
+    (a, b) => frequencies[a] > frequencies[b] ? a : b
+  );
+}
+
+/**
+ * Create a div (and children) for display measurement levels for a year.
+ * @param {String} year The year this div is being created for.
+ * @returns {Element} A div.
+ */
+function createYearStatsDiv(year) {
+  let yearDiv = document.createElement('div');
+  yearDiv.classList.add('stats-year');
+  yearDiv.innerText = year;
+
+  let barGraphDiv = document.createElement('div');
+  barGraphDiv.classList.add('bar-graph')
+  yearDiv.appendChild(barGraphDiv);
+
+  return yearDiv;
+}
+
+/**
+ * Create the bar graphs that display the most common measurement levels per year.
+ */
+function populateBarGraph() {
+  years.forEach((year) => {
+    let yearDiv = createYearStatsDiv(year);
+
+    for (let month = 1; month <= MONTHS.length; month++) {
+      let paddedMonth = month <= 9 ? `0${month}` : month;
+      let date = `${year}-${paddedMonth}`;
+
+      // Create an individual bar element
+      let monthDiv = document.createElement('div');
+      monthDiv.id = date;
+      monthDiv.classList.add('bar');
+      yearDiv.firstElementChild.appendChild(monthDiv);
+
+      let mostCommonLevel = mostCommonLevelForDate(date);
+      if (mostCommonLevel != null) {
+        monthDiv.style.backgroundColor = LEVELS[mostCommonLevel][0];
+        monthDiv.title = `${MONTHS[month - 1]}`;
+
+        monthDiv.onclick = function (e) {
+          handleDateChanged(e.target.id);
+        };
+
+        monthDiv.onmouseover = function (e) {
+          handleDateChanged(e.target.id);
+        };
+      } else {
+        monthDiv.style.visibility = "hidden";
+      }
+    }
+
+    document.getElementById('stats').appendChild(yearDiv);
   });
 }
 
@@ -119,7 +185,15 @@ async function fetchMeasurementDataAsync() {
 
 // Kick everything off by fetching the measurement data
 fetchMeasurementDataAsync().then(data => {
+  // Reduce the measurement data to a single measurement per location per month.
+  // For locations with more than one measurement in a month, take the greatest
+  // measurement.
   measurementData = reduceToMonths(data);
-  dates = Object.keys(measurementData).sort();
-  configureRangeSlider();
+
+  // Build a set of years for which measurments exist
+  Object.keys(measurementData).sort().forEach((date) => {
+    years.add(date.split('-')[0]);
+  });
+
+  populateBarGraph();
 });
