@@ -9,7 +9,7 @@ svg {
   flex-grow: 0;
   flex-shrink: 1;
   flex-basis: auto;
-  border-right: 1px solid #555;
+  border-right: 1px dashed #aaa;
 }
 
 #content {
@@ -22,8 +22,8 @@ svg {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin: 1rem 0;
-  margin-right: 4rem;
+  margin: 1rem 4rem;
+  margin-left: 3rem;
 }
 
 .stats-year {
