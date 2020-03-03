@@ -70,10 +70,12 @@ function mostCommonLevelForDate(date) {
   let frequencies = measurements.reduce((frequencies, measurement) => {
     const level = measurementLevel(measurement);
 
-    if (level in frequencies) {
+    if (level != -1) {
+      if (level in frequencies) {
         frequencies[level]++;
-    } else {
-        frequencies[level] = 1;
+      } else {
+          frequencies[level] = 1;
+      }
     }
 
     return frequencies;
@@ -122,6 +124,7 @@ function populateBarGraph() {
       let mostCommonLevel = mostCommonLevelForDate(date);
       if (mostCommonLevel != null) {
         monthDiv.style.backgroundColor = LEVELS[mostCommonLevel][0];
+        monthDiv.style.borderColor = LEVELS[mostCommonLevel][1];
         monthDiv.title = `${MONTHS[month - 1]}`;
 
         monthDiv.onclick = function (e) {
