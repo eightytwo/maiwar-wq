@@ -17,6 +17,15 @@ var measurementData;
 var years = new Set();
 
 /**
+ * Toggle the visibility of the about panel and the bar graphs panel.
+ * Only one is visible at a time.
+ */
+function toggleAbout() {
+  document.getElementById('about').classList.toggle('hidden');
+  document.getElementById('stats').classList.toggle('hidden');
+}
+
+/**
  * Determine the level of a measurement.
  * @param {Number} measurement A value representing a single measurement.
  * @returns {Number} A key from the `LEVELS` dictionary representing the level

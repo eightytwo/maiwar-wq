@@ -45,10 +45,21 @@ svg {
 }
 
 #sidebar {
+  min-width: 15rem;
   display: flex;
   flex-direction: column;
   margin: 1rem 4rem;
   margin-left: 3rem;
+}
+
+#header {
+  float: right;
+  text-align: right;
+}
+
+#about {
+  margin-top: 2rem;
+  flex-grow: 2;
 }
 
 #stats {
@@ -56,11 +67,6 @@ svg {
   flex-direction: column;
   justify-content: center;
   flex-grow: 2;
-}
-
-#header {
-  float: right;
-  text-align: right;
 }
 
 #footer {
@@ -78,8 +84,8 @@ svg {
 }
 
 .bar {
-  width: 14px;
-  height: 20px;
+  width: 0.9rem;
+  height: 1.3rem;
   margin: 0 0.1rem;
   border: 1px solid transparent;
   cursor: pointer;
@@ -91,4 +97,8 @@ svg {
 
 .menu-link {
   margin-left: 0.4rem;
+}
+
+.hidden {
+  display: none !important;
 }
