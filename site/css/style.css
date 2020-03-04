@@ -23,6 +23,11 @@ html, body {
   height: 100%;
   margin: 0;
   background-color: #f8f5da;
+  font-family: 'ETBembo';
+}
+
+a {
+  color: #000;
 }
 
 svg {
@@ -39,12 +44,27 @@ svg {
   flex-direction: row;
 }
 
+#sidebar {
+  display: flex;
+  flex-direction: column;
+  margin: 1rem 4rem;
+  margin-left: 3rem;
+}
+
 #stats {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin: 1rem 4rem;
-  margin-left: 3rem;
+  flex-grow: 2;
+}
+
+#header {
+  float: right;
+  text-align: right;
+}
+
+#footer {
+  text-align: right;
 }
 
 .stats-year {
@@ -63,4 +83,12 @@ svg {
   margin: 0 0.1rem;
   border: 1px solid transparent;
   cursor: pointer;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.menu-link {
+  margin-left: 0.4rem;
 }
