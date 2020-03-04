@@ -41,6 +41,12 @@ function measurementLevel(measurement) {
  */
 function handleDateChanged(date) {
   let locations = measurementData[date];
+  let [year, month] = date.split('-');
+  month = MONTHS[Number(month) - 1];
+
+  // Display the selected month and year
+  document.getElementById('current-date').textContent = `${month} ${year}`;
+
   for (nextLocation in locations) {
     let measurement = measurementData[date][nextLocation];
     let measurementStyle = LEVELS[measurementLevel(measurement)];
@@ -193,10 +199,16 @@ fetchMeasurementDataAsync().then(data => {
   // measurement.
   measurementData = reduceToMonths(data);
 
+  const sortedDates = Object.keys(measurementData).sort();
+
   // Build a set of years for which measurments exist
-  Object.keys(measurementData).sort().forEach((date) => {
+  sortedDates.forEach((date) => {
     years.add(date.split('-')[0]);
   });
 
+  // Display the summary of the measurements over time
   populateBarGraph();
+
+  // Display the latest measurements on the map
+  handleDateChanged(sortedDates[sortedDates.length - 1]);
 });
