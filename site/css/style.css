@@ -32,6 +32,11 @@ a {
   outline: none;
 }
 
+p {
+  margin: 0;
+  margin-bottom: 2rem;
+}
+
 svg {
   margin: 1rem 1rem;
   flex-grow: 0;
