@@ -133,18 +133,25 @@
       </svg>
 
       <div id="sidebar">
-        <div id="header">
-          <a class="menu-link" href="#" onclick="toggleAbout()">About</a>
-          <a class="menu-link" href="mailto://contact@maiwarwq.net">Contact</a>
+        <div id="sidebar-header">
+          <a class="menu-item" href="#" onclick="menuItemSelected('chart')" data-name='chart'>Chart</a>
+          <a class="menu-item menu-item-selected" href="#" onclick="menuItemSelected('about')" data-name='about'>About</a>
+          <a class="menu-item" href="#" onclick="menuItemSelected('contact')" data-name='contact'>Contact</a>
         </div>
 
-        <div id="about" class="hidden">
-          This is the about text.
+        <div id="chart" class="sidebar-content hidden"></div>
+
+        <div id="about" class="sidebar-content visible">
+          This website displays the results of
+          <a href="https://brisbane.qld.gov.au/">Brisbane City Council's</a>
+          enterococci monitoring of Maiwar (the Brisbane River).
         </div>
 
-        <div id="stats"></div>
+        <div id="contact" class="sidebar-content hidden">
+          This is how you can contact me.
+        </div>
 
-        <div id="footer">
+        <div id="sidebar-footer">
           <span class="bold">Last updated</span>
           <br />
           Wed 4 March 3:55 PM

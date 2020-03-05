@@ -28,6 +28,8 @@ html, body {
 
 a {
   color: #000;
+  text-decoration: underline;
+  outline: none;
 }
 
 svg {
@@ -46,34 +48,28 @@ svg {
 
 #sidebar {
   min-width: 15rem;
+  max-width: 15rem;
   display: flex;
   flex-direction: column;
   margin: 1rem 4rem;
   margin-left: 3rem;
 }
 
-#header {
+#sidebar-header {
   float: right;
   text-align: right;
 }
 
-#about {
-  margin-top: 2rem;
-  flex-grow: 2;
-}
-
-#stats {
-  display: flex;
+#chart {
   flex-direction: column;
   justify-content: center;
-  flex-grow: 2;
 }
 
-#footer {
+#sidebar-footer {
   text-align: right;
 }
 
-.stats-year {
+.chart-year {
   margin-bottom: 1.2rem;
   font-weight: bold;
 }
@@ -91,14 +87,27 @@ svg {
   cursor: pointer;
 }
 
-.bold {
-  font-weight: bold;
+.menu-item {
+  margin-left: 0.8rem;
 }
 
-.menu-link {
-  margin-left: 0.4rem;
+.menu-item-selected {
+  text-decoration-style: double;
 }
 
 .hidden {
-  display: none !important;
+  display: none;
+}
+
+.visible {
+  display: block;
+}
+
+.sidebar-content {
+  margin-top: 2rem;
+  flex-grow: 2;
+}
+
+.bold {
+  font-weight: bold;
 }

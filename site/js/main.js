@@ -17,12 +17,30 @@ var measurementData;
 var years = new Set();
 
 /**
- * Toggle the visibility of the about panel and the bar graphs panel.
- * Only one is visible at a time.
+ * Change the content of the sidebar when menu items are clicked.
  */
-function toggleAbout() {
-  document.getElementById('about').classList.toggle('hidden');
-  document.getElementById('stats').classList.toggle('hidden');
+function menuItemSelected(targetName) {
+  // Hide all other sidebar content
+  for (element of document.getElementsByClassName('visible')) {
+    document.getElementById(element.id).classList.add('hidden');
+    document.getElementById(element.id).classList.remove('visible');
+  }
+
+  // Show the sidebar content for the selected menu item
+  const target = document.getElementById(targetName);
+  target.classList.add('visible');
+  target.classList.remove('hidden');
+
+  // Update the selected menu item style
+  for (element of document.getElementsByClassName('menu-item')) {
+    if (element.getAttribute('data-name') == targetName) {
+      element.classList.add('menu-item-selected');
+    } else {
+      element.classList.remove('menu-item-selected');
+    }
+  }
+
+  return false;
 }
 
 /**
@@ -107,9 +125,9 @@ function mostCommonLevelForDate(date) {
  * @param {String} year The year this div is being created for.
  * @returns {Element} A div.
  */
-function createYearStatsDiv(year) {
+function createYearChartDiv(year) {
   let yearDiv = document.createElement('div');
-  yearDiv.classList.add('stats-year');
+  yearDiv.classList.add('chart-year');
   yearDiv.innerText = year;
 
   let barGraphDiv = document.createElement('div');
@@ -124,7 +142,7 @@ function createYearStatsDiv(year) {
  */
 function populateBarGraph() {
   years.forEach((year) => {
-    let yearDiv = createYearStatsDiv(year);
+    let yearDiv = createYearChartDiv(year);
 
     for (let month = 1; month <= MONTHS.length; month++) {
       let paddedMonth = month <= 9 ? `0${month}` : month;
@@ -154,7 +172,7 @@ function populateBarGraph() {
       }
     }
 
-    document.getElementById('stats').appendChild(yearDiv);
+    document.getElementById('chart').appendChild(yearDiv);
   });
 }
 
