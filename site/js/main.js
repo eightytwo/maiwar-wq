@@ -1,4 +1,4 @@
-const DATA_URL = "https://eightytwo.gitub.io/maiwar-wq/data/measurements.json";
+const DATA_URL = "https://raw.githubusercontent.com/eightytwo/maiwar-wq/master/site/data/measurements.json";
 
 const LEVELS = {
   '-1': ['url(#b)', '#828282'],
