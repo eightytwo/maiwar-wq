@@ -38,6 +38,7 @@ p {
 }
 
 svg {
+  width: 100px;
   margin: 1rem 1rem;
   flex-grow: 0;
   flex-shrink: 1;
