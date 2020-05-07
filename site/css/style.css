@@ -86,8 +86,8 @@ svg {
 }
 
 .bar {
-  width: 0.9rem;
-  height: 1.3rem;
+  width: 0.8rem;
+  height: 0.8rem;
   margin: 0 0.1rem;
   border: 1px solid transparent;
   cursor: pointer;
