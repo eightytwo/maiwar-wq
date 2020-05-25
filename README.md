@@ -2,6 +2,8 @@
 
 A map displaying the water quality of Maiwar (the Brisbane River) over time.
 
+Check it out at https://eightytwo.net/maiwar-wq/.
+
 ![Screenshot of of the Maiwar Water Quality website](screenshot.png "Screenshot of of the Maiwar Water Quality website")
 
 This project provides a way to view the water quality of Maiwar on a map from 2011 to the present day. The data is sourced from a publicly available spreadsheet which lists measurements taken monthly (and sometimes twice monthly) from a variety of locations along the river. The water samples taken are tested for Enterococci and the measurement values are Colony Forming Units per 100 ml of water (CFU 100 ml-1).
