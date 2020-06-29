@@ -1,4 +1,4 @@
-const DATA_URL = "https://raw.githubusercontent.com/eightytwo/maiwar-wq/master/site/data/measurements.json";
+const DATA_URL = "data/measurements.json";
 
 const LEVELS = {
   '-1': ['url(#b)', '#828282'],
@@ -107,7 +107,7 @@ function mostCommonLevelForDate(date) {
       if (level in frequencies) {
         frequencies[level]++;
       } else {
-          frequencies[level] = 1;
+        frequencies[level] = 1;
       }
     }
 
