@@ -40,7 +40,8 @@
 ;; contain '<1' instead of holding a decimal value.
 (define (cleanse-measurement measurement)
   (match measurement
-    [(regexp #rx"^<") (string->number (string-replace measurement "<" ""))]
+    [(regexp #rx"^<|^>")
+     (string->number (string-replace measurement #rx"<|>|," ""))]
     ["NT" -1]
     [else measurement]))
 

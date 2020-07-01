@@ -33,8 +33,8 @@ def cleanse_measurement(measurement: str) -> int:
     """
     if isinstance(measurement, int):
         return measurement
-    elif measurement.startswith('<'):
-        return int(measurement.replace('<', ''))
+    elif measurement.startswith(('<', '>')):
+        return int(measurement.replace('<', '').replace('>', '').replace(',', ''))
     else:
         return -1
 
