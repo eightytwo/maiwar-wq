@@ -1,0 +1,9 @@
+[Unit]
+Description=Timer for checking for new Maiwar WQ measurements data
+
+[Timer]
+OnCalendar=weekly
+Persistent=true
+
+[Install]
+WantedBy=multi-user.target

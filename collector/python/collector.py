@@ -1,4 +1,5 @@
 import json
+import tempfile
 from collections import defaultdict
 from datetime import datetime
 from typing import Dict
@@ -11,10 +12,6 @@ from openpyxl.utils.cell import get_column_letter
 from openpyxl.worksheet.worksheet import Worksheet
 
 
-# The Excel file to read and the JSON document to write
-XLSX_FILE = 'measurements.xlsx'
-RESULTS_FILE = 'measurements_py.json'
-
 # Column and row indexes of relevant data
 DATE_ROW = 7
 FIRST_DATE_COL = 'G'
@@ -23,7 +20,7 @@ LAST_LOCATION_ROW = 18
 LOCATION_COL = 'C'
 
 
-def cleanse_measurement(measurement: str) -> int:
+def _cleanse_measurement(measurement: str) -> int:
     """Ensure a measurement taken from a spreadsheet is a number.
     The string 'NT' is used to represent 'Not tested' and some cells
     contain '<1' instead of an integer value.
@@ -39,7 +36,7 @@ def cleanse_measurement(measurement: str) -> int:
         return -1
 
 
-def get_dates(sheet: Worksheet) -> List[datetime]:
+def _get_dates(sheet: Worksheet) -> List[datetime]:
     """Extract the measurement dates from the spreadsheet.
 
     :param sheet: The spreadsheet to read the dates from.
@@ -51,7 +48,7 @@ def get_dates(sheet: Worksheet) -> List[datetime]:
     return dates
 
 
-def get_locations(sheet: Worksheet) -> List[str]:
+def _get_locations(sheet: Worksheet) -> List[str]:
     """Extract the locations from the spreadsheet.
 
     :param sheet: The spreadsheet to read the locations from.
@@ -62,7 +59,7 @@ def get_locations(sheet: Worksheet) -> List[str]:
     return [l.value.lower().replace(" ", "-") for l, in sheet[start:end]]
 
 
-def get_measurements(sheet: Worksheet) -> List[Tuple[int, ...]]:
+def _get_measurements(sheet: Worksheet) -> List[Tuple[int, ...]]:
     """Extract the measurements from the spreadsheet.
 
     :param sheet: The spreadsheet to read the locations from.
@@ -81,12 +78,12 @@ def get_measurements(sheet: Worksheet) -> List[Tuple[int, ...]]:
         if not col[0]:
             continue
 
-        measurements.append(tuple(cleanse_measurement(value) for value in col))
+        measurements.append(tuple(_cleanse_measurement(value) for value in col))
 
     return measurements
 
 
-def read_sheet(sheet: Worksheet) -> Dict[str, Dict[str, int]]:
+def _read_sheet(sheet: Worksheet) -> Dict[str, Dict[str, int]]:
     """Read date, location, and measurement data from a spreadsheet and represent
     this information as a dictionary. Date keys reference dictionaries of location
     and measurement key-value pairs.
@@ -95,9 +92,9 @@ def read_sheet(sheet: Worksheet) -> Dict[str, Dict[str, int]]:
     :return: A nested dictionary representing the dates and locations measurements
      were taken.
     """
-    dates = get_dates(sheet)
-    locations = get_locations(sheet)
-    measurements = get_measurements(sheet)
+    dates = _get_dates(sheet)
+    locations = _get_locations(sheet)
+    measurements = _get_measurements(sheet)
 
     results = defaultdict(dict)
 
@@ -110,15 +107,37 @@ def read_sheet(sheet: Worksheet) -> Dict[str, Dict[str, int]]:
     return results
 
 
-if __name__ == "__main__":
-    wb = load_workbook(filename=XLSX_FILE)
+def _transform(workbook_path: str) -> Dict:
+    """Transform an Excel workbook of measurements into JSON.
+
+    :param workbook_path: The full file path to the Excel workbook.
+    :return: A dictionary containing the measurements from the Excel workbook.
+    """
+    wb = load_workbook(filename=workbook_path)
     result_sheets = [sheet for sheet in wb if 'results' in sheet.title]
 
     all_results = {}
 
     for sheet in result_sheets:
-        results = read_sheet(sheet)
+        results = _read_sheet(sheet)
         all_results.update(results)
 
-    with open(RESULTS_FILE, 'w') as f:
-        f.write(json.dumps(all_results, sort_keys=True))
+    return all_results
+
+
+def transform(workbook: bytes) -> Dict:
+    """Transform an Excel workbook of measurements into JSON.
+
+    :param workbook: The workbook data.
+    :return: A dictionary containing the measurements from the Excel workbook.
+    """
+    with tempfile.NamedTemporaryFile(suffix='.xlsx') as tmp:
+        tmp.write(workbook)
+        return _transform(tmp.name)
+
+
+if __name__ == "__main__":
+    results = _transform('/tmp/mwq_measurements.xlsx')
+
+    with open('/tmp/mwq_measurements.json', 'w') as f:
+        f.write(json.dumps(results, sort_keys=True))

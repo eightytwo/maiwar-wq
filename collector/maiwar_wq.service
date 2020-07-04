@@ -1,0 +1,5 @@
+[Unit]
+Description=Fetch new measurements data for Maiwar WQ
+
+[Service]
+ExecStart=maiwar_wq_collector
