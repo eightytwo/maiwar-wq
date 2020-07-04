@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "mwq_collector"
+version = "0.0.1"
+description = "A program to the latest collect water quality measurement data for the Maiwar WQ project."
+license = "GPL-3.0-or-later"
+authors = ["eightytwo"]
+homepage = "https://github.com/eightytwo/maiwar-wq"
+
+[tool.poetry.scripts]
+mwq_collector = "mwq_collector.main:run"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+beautifulsoup4 = "^4.9.1"
+openpyxl = "^3.0.4"
+requests = "^2.24.0"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

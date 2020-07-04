@@ -6,8 +6,8 @@ from os.path import expanduser
 from typing import Dict
 
 import requests
-from collector import transform
-from scraper import get_latest_spreadsheet
+from .collector import transform
+from .scraper import get_latest_spreadsheet
 
 
 CURRENT_DATA_URL = 'https://eightytwo.net/maiwar-wq/data/measurements.json'
@@ -29,7 +29,7 @@ def _read_config() -> Dict:
 
     deploy_options = dict(config.items('deploy'))
 
-    if ['deploy_script', 'measurements_file'] != list(deploy_options.keys()):
+    if 'measurements_file' not in deploy_options:
         logging.error("Configuration file is missing settings")
         exit(1)
 
@@ -61,7 +61,7 @@ def _get_check_measurements() -> Dict:
     return new_measurements
 
 
-if __name__ == '__main__':
+def run():
     config = _read_config()
 
     new_measurements = _get_check_measurements()
@@ -75,6 +75,10 @@ if __name__ == '__main__':
         [
             'notify-send',
             'Maiwar WQ',
-            'New measurements are available. Update the last modified and deploy.'
+            'New measurements are available.\nUpdate the last modified and deploy.'
         ]
     )
+
+
+if __name__ == '__main__':
+    run()
