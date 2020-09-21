@@ -6,8 +6,8 @@ from os.path import expanduser
 from typing import Dict
 
 import requests
-from .collector import transform
-from .scraper import get_latest_spreadsheet
+from collector import transform
+from scraper import get_latest_spreadsheet
 
 
 CURRENT_DATA_URL = 'https://eightytwo.net/maiwar-wq/data/measurements.json'
