@@ -12,10 +12,10 @@ from openpyxl.worksheet.worksheet import Worksheet
 
 # Column and row indexes of relevant data
 DATE_ROW = 7
-FIRST_DATE_COL = 'G'
+FIRST_DATE_COL = "G"
 FIRST_LOCATION_ROW = 8
 LAST_LOCATION_ROW = 18
-LOCATION_COL = 'C'
+LOCATION_COL = "C"
 
 
 def _cleanse_measurement(measurement: str) -> int:
@@ -28,8 +28,8 @@ def _cleanse_measurement(measurement: str) -> int:
     """
     if isinstance(measurement, int):
         return measurement
-    elif measurement.startswith(('<', '>')):
-        return int(measurement.replace('<', '').replace('>', '').replace(',', ''))
+    elif measurement.startswith(("<", ">")):
+        return int(measurement.replace("<", "").replace(">", "").replace(",", ""))
     else:
         return -1
 
@@ -40,8 +40,8 @@ def _get_dates(sheet: Worksheet) -> list[datetime]:
     :param sheet: The spreadsheet to read the dates from.
     :return: A list of datetime objects.
     """
-    start = f'{FIRST_DATE_COL}{DATE_ROW}'
-    end = f'{get_column_letter(sheet.max_column)}{DATE_ROW}'
+    start = f"{FIRST_DATE_COL}{DATE_ROW}"
+    end = f"{get_column_letter(sheet.max_column)}{DATE_ROW}"
     dates = [d.value for d in sheet[start:end][0] if d.value]
     return dates
 
@@ -52,9 +52,9 @@ def _get_locations(sheet: Worksheet) -> list[str]:
     :param sheet: The spreadsheet to read the locations from.
     :return: A list of location names.
     """
-    start = f'{LOCATION_COL}{FIRST_LOCATION_ROW}'
-    end = f'{LOCATION_COL}{LAST_LOCATION_ROW}'
-    return [l.value.lower().replace(" ", "-") for l, in sheet[start:end]]
+    start = f"{LOCATION_COL}{FIRST_LOCATION_ROW}"
+    end = f"{LOCATION_COL}{LAST_LOCATION_ROW}"
+    return [location.value.lower().replace(" ", "-") for location, in sheet[start:end]]
 
 
 def _get_measurements(sheet: Worksheet) -> list[tuple[int, ...]]:
@@ -68,7 +68,8 @@ def _get_measurements(sheet: Worksheet) -> list[tuple[int, ...]]:
         max_row=LAST_LOCATION_ROW,
         min_col=column_index_from_string(FIRST_DATE_COL),
         max_col=sheet.max_column,
-        values_only=True)
+        values_only=True,
+    )
 
     measurements = []
 
@@ -112,7 +113,7 @@ def _transform(workbook_path: str) -> dict:
     :return: A dictionary containing the measurements from the Excel workbook.
     """
     wb = load_workbook(filename=workbook_path)
-    result_sheets = [sheet for sheet in wb if 'results' in sheet.title]
+    result_sheets = [sheet for sheet in wb if "results" in sheet.title]
 
     all_results = {}
 
@@ -129,11 +130,11 @@ def transform(workbook: bytes) -> dict:
     :param workbook: The workbook data.
     :return: A dictionary containing the measurements from the Excel workbook.
     """
-    with tempfile.NamedTemporaryFile(suffix='.xlsx') as tmp:
+    with tempfile.NamedTemporaryFile(suffix=".xlsx") as tmp:
         tmp.write(workbook)
         return _transform(tmp.name)
 
 
 if __name__ == "__main__":
-    results = _transform('/tmp/mwq_measurements.xlsx')
-    Path('/tmp/mwq_measurements.json').write_text(json.dumps(results, sort_keys=True))
+    results = _transform("/tmp/mwq_measurements.xlsx")
+    Path("/tmp/mwq_measurements.json").write_text(json.dumps(results, sort_keys=True))

@@ -1,16 +1,16 @@
 import configparser
 import json
 import logging
-import subprocess
-from pathlib import Path
+import subprocess  # nosec
 from os.path import expanduser
+from pathlib import Path
 
 import requests
 from mwq_collector.collector import transform
 from mwq_collector.scraper import get_latest_spreadsheet
 
 
-CURRENT_DATA_URL = 'https://eightytwo.net/maiwar-wq/data/measurements.json'
+CURRENT_DATA_URL = "https://eightytwo.net/maiwar-wq/data/measurements.json"
 
 
 def _read_config() -> dict:
@@ -21,15 +21,15 @@ def _read_config() -> dict:
     config = configparser.ConfigParser()
     config.read(expanduser("~/.config/maiwar_wq/config.ini"))
 
-    if not config.has_section('deploy'):
+    if not config.has_section("deploy"):
         logging.error(
             "No configuration file found or the file is missing the 'deploy' section"
         )
         exit(1)
 
-    deploy_options = dict(config.items('deploy'))
+    deploy_options = dict(config.items("deploy"))
 
-    if 'measurements_file' not in deploy_options:
+    if "measurements_file" not in deploy_options:
         logging.error("Configuration file is missing settings")
         exit(1)
 
@@ -67,19 +67,19 @@ def run():
     new_measurements = _get_check_measurements()
     logging.info("New measurements are available")
 
-    Path(config['measurements_file']).write_text(
+    Path(config["measurements_file"]).write_text(
         json.dumps(new_measurements, sort_keys=True)
     )
 
     # For now just create a notification that new measurements have been downloaded
-    subprocess.call(
+    subprocess.call(  # nosec
         [
-            'notify-send',
-            'Maiwar WQ',
-            'New measurements are available.\nUpdate the last modified and deploy.'
+            "notify-send",
+            "Maiwar WQ",
+            "New measurements are available.\nUpdate the last modified and deploy.",
         ]
     )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run()

@@ -30,7 +30,7 @@ repos:
     rev: v2.3.6
     hooks:
     - id: reorder-python-imports
-      args: [--py37-plus, "--application-directories=alq_racing"]
+      args: [--py37-plus]
   - repo: https://gitlab.com/pycqa/flake8
     rev: 3.8.4
     hooks:

@@ -6,8 +6,8 @@ import requests
 from bs4 import BeautifulSoup
 
 
-BCC_URL = 'https://www.brisbane.qld.gov.au/clean-and-green/natural-environment-and-water/water/water-quality-monitoring/'
-DATA_URL = 'https://www.eightytwo.net/maiwar-wq/data/measurements.json'
+BCC_URL = "https://www.brisbane.qld.gov.au/clean-and-green/natural-environment-and-water/water/water-quality-monitoring/"
+DATA_URL = "https://www.eightytwo.net/maiwar-wq/data/measurements.json"
 
 
 def _find_report_links() -> list[str]:
@@ -17,13 +17,13 @@ def _find_report_links() -> list[str]:
     """
     with requests.Session() as session:
         session.headers[
-            'user-agent'
+            "user-agent"
         ] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36"
         response = session.get(BCC_URL)
-        soup = BeautifulSoup(response.text, 'html.parser')
+        soup = BeautifulSoup(response.text, "html.parser")
 
     return [
-        link.get('href') for link in soup.find_all('a', href=re.compile(r"\.xlsx$"))
+        link.get("href") for link in soup.find_all("a", href=re.compile(r"\.xlsx$"))
     ]
 
 
@@ -40,7 +40,7 @@ def _find_current_report(reports: list[str]) -> str:
 
     for report_url in reports:
         r = requests.head(report_url)
-        report_sizes[r.headers['Content-Length']] = report_url
+        report_sizes[r.headers["Content-Length"]] = report_url
 
     return report_sizes[max(report_sizes.keys())]
 
@@ -76,5 +76,5 @@ def get_latest_spreadsheet() -> bytes:
     return _download_file(current)
 
 
-if __name__ == '__main__':
-    Path('/tmp/mwq_measurements.xlsx').write_bytes(get_latest_spreadsheet())
+if __name__ == "__main__":
+    Path("/tmp/mwq_measurements.xlsx").write_bytes(get_latest_spreadsheet())
