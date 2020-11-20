@@ -2,9 +2,7 @@ import json
 import tempfile
 from collections import defaultdict
 from datetime import datetime
-from typing import Dict
-from typing import List
-from typing import Tuple
+from pathlib import Path
 
 from openpyxl import load_workbook
 from openpyxl.utils.cell import column_index_from_string
@@ -36,7 +34,7 @@ def _cleanse_measurement(measurement: str) -> int:
         return -1
 
 
-def _get_dates(sheet: Worksheet) -> List[datetime]:
+def _get_dates(sheet: Worksheet) -> list[datetime]:
     """Extract the measurement dates from the spreadsheet.
 
     :param sheet: The spreadsheet to read the dates from.
@@ -48,7 +46,7 @@ def _get_dates(sheet: Worksheet) -> List[datetime]:
     return dates
 
 
-def _get_locations(sheet: Worksheet) -> List[str]:
+def _get_locations(sheet: Worksheet) -> list[str]:
     """Extract the locations from the spreadsheet.
 
     :param sheet: The spreadsheet to read the locations from.
@@ -59,7 +57,7 @@ def _get_locations(sheet: Worksheet) -> List[str]:
     return [l.value.lower().replace(" ", "-") for l, in sheet[start:end]]
 
 
-def _get_measurements(sheet: Worksheet) -> List[Tuple[int, ...]]:
+def _get_measurements(sheet: Worksheet) -> list[tuple[int, ...]]:
     """Extract the measurements from the spreadsheet.
 
     :param sheet: The spreadsheet to read the locations from.
@@ -83,7 +81,7 @@ def _get_measurements(sheet: Worksheet) -> List[Tuple[int, ...]]:
     return measurements
 
 
-def _read_sheet(sheet: Worksheet) -> Dict[str, Dict[str, int]]:
+def _read_sheet(sheet: Worksheet) -> dict[str, dict[str, int]]:
     """Read date, location, and measurement data from a spreadsheet and represent
     this information as a dictionary. Date keys reference dictionaries of location
     and measurement key-value pairs.
@@ -107,7 +105,7 @@ def _read_sheet(sheet: Worksheet) -> Dict[str, Dict[str, int]]:
     return results
 
 
-def _transform(workbook_path: str) -> Dict:
+def _transform(workbook_path: str) -> dict:
     """Transform an Excel workbook of measurements into JSON.
 
     :param workbook_path: The full file path to the Excel workbook.
@@ -125,7 +123,7 @@ def _transform(workbook_path: str) -> Dict:
     return all_results
 
 
-def transform(workbook: bytes) -> Dict:
+def transform(workbook: bytes) -> dict:
     """Transform an Excel workbook of measurements into JSON.
 
     :param workbook: The workbook data.
@@ -138,6 +136,4 @@ def transform(workbook: bytes) -> Dict:
 
 if __name__ == "__main__":
     results = _transform('/tmp/mwq_measurements.xlsx')
-
-    with open('/tmp/mwq_measurements.json', 'w') as f:
-        f.write(json.dumps(results, sort_keys=True))
+    Path('/tmp/mwq_measurements.json').write_text(json.dumps(results, sort_keys=True))

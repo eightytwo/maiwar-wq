@@ -10,7 +10,7 @@ homepage = "https://github.com/eightytwo/maiwar-wq"
 mwq_collector = "mwq_collector.main:run"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.9"
 beautifulsoup4 = "^4.9.1"
 openpyxl = "^3.0.4"
 requests = "^2.24.0"

@@ -1,7 +1,6 @@
 import logging
 import re
-from typing import Dict
-from typing import List
+from pathlib import Path
 
 import requests
 from bs4 import BeautifulSoup
@@ -11,7 +10,7 @@ BCC_URL = 'https://www.brisbane.qld.gov.au/clean-and-green/natural-environment-a
 DATA_URL = 'https://www.eightytwo.net/maiwar-wq/data/measurements.json'
 
 
-def _find_report_links() -> List[str]:
+def _find_report_links() -> list[str]:
     """Find all links in the web page that reference Excel documents.
 
     :return: A list of links to Excel documents.
@@ -28,7 +27,7 @@ def _find_report_links() -> List[str]:
     ]
 
 
-def _find_current_report(reports: List[str]) -> str:
+def _find_current_report(reports: list[str]) -> str:
     """Find the most recent report given a list of links to Excel documents.
 
     The most recent document is determined by file size, the file with the largest
@@ -37,7 +36,7 @@ def _find_current_report(reports: List[str]) -> str:
     :param reports: A list of links to Excel documents.
     :return: A link to the most recent Excel document.
     """
-    report_sizes: Dict(int, str) = {}
+    report_sizes: dict[int, str] = {}
 
     for report_url in reports:
         r = requests.head(report_url)
@@ -78,5 +77,4 @@ def get_latest_spreadsheet() -> bytes:
 
 
 if __name__ == '__main__':
-    with open('/tmp/mwq_measurements.xlsx', 'wb') as f:
-        f.write(get_latest_spreadsheet())
+    Path('/tmp/mwq_measurements.xlsx').write_bytes(get_latest_spreadsheet())

@@ -1,16 +1,10 @@
 import json
+from pathlib import Path
 
 
 PYTHON_FILE = "measurements_py.json"
 RACKET_FILE = "measurements_rkt.json"
 
-
-with open(PYTHON_FILE) as f:
-    python_json = json.loads(f.read())
-
-
-with open(RACKET_FILE) as f:
-    racket_json = json.loads(f.read())
-
-
+python_json = json.loads(Path(PYTHON_FILE).read_text())
+racket_json = json.loads(Path(RACKET_FILE).read_text())
 assert python_json == racket_json

@@ -2,18 +2,18 @@ import configparser
 import json
 import logging
 import subprocess
+from pathlib import Path
 from os.path import expanduser
-from typing import Dict
 
 import requests
-from collector import transform
-from scraper import get_latest_spreadsheet
+from mwq_collector.collector import transform
+from mwq_collector.scraper import get_latest_spreadsheet
 
 
 CURRENT_DATA_URL = 'https://eightytwo.net/maiwar-wq/data/measurements.json'
 
 
-def _read_config() -> Dict:
+def _read_config() -> dict:
     """Read the configuration file for the program.
 
     :return: A dictionary representing the program's configuration.
@@ -36,13 +36,13 @@ def _read_config() -> Dict:
     return deploy_options
 
 
-def _get_check_measurements() -> Dict:
+def _get_check_measurements() -> dict:
     """Check if new measurements are available and if so, download them.
 
     :return: A dictionary containing the new measurements.
     """
     spreadsheet: bytes = get_latest_spreadsheet()
-    new_measurements: Dict = transform(spreadsheet)
+    new_measurements: dict = transform(spreadsheet)
 
     if not new_measurements:
         logging.error("Error reading new measurements data")
@@ -67,8 +67,9 @@ def run():
     new_measurements = _get_check_measurements()
     logging.info("New measurements are available")
 
-    with open(config['measurements_file'], 'w') as f:
-        f.write(json.dumps(new_measurements, sort_keys=True))
+    Path(config['measurements_file']).write_text(
+        json.dumps(new_measurements, sort_keys=True)
+    )
 
     # For now just create a notification that new measurements have been downloaded
     subprocess.call(
