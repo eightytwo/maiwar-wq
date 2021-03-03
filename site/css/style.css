@@ -75,6 +75,13 @@ svg {
   text-align: right;
 }
 
+#location-chart {
+  position: absolute;
+  width: 250px;
+  height: 100px;
+  border: 1px solid #000;
+}
+
 .chart-year {
   margin-bottom: 1.2rem;
   font-weight: bold;

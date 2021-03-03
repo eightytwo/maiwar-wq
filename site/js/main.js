@@ -17,6 +17,27 @@ var measurementData;
 var years = new Set();
 
 /**
+ * Set up event handlers for showing a chart that displays historical water
+ * quality measurements for a specific location.
+ */
+function setupLocationEventHandlers() {
+  const location_chart = document.getElementById('location-chart');
+
+  // Find all locations on the map
+  // TODO: change this to find location labels, not the circles
+  document.querySelectorAll('circle[id ^= "location-"]').forEach((location) => {
+    location.onclick = function (e) {
+      location_chart.classList.remove('hidden');
+      location_chart.style.left = e.target.getBoundingClientRect().x + 'px';
+      location_chart.style.top =  e.target.getBoundingClientRect().y + 'px';
+    };
+  });
+
+  // Allow the location chart to be closed
+  // TODO: add some sort of close button to the location chart box
+}
+
+/**
  * Change the content of the sidebar when menu items are clicked.
  */
 function menuItemSelected(targetName) {
@@ -238,4 +259,7 @@ fetchMeasurementDataAsync().then(data => {
 
   // Display the latest measurements on the map
   handleDateChanged(sortedDates[sortedDates.length - 1]);
+
+  // Set up event handlers for each location on the map
+  setupLocationEventHandlers();
 });
