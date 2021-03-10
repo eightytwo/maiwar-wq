@@ -17,28 +17,61 @@ var measurementData;
 var years = new Set();
 
 /**
- * Set up event handlers for showing a chart that displays historical water
- * quality measurements for a specific location.
+ * Display a bar graph showing the history of measurements for a location.
+ * @param {locationElement} Element The  fs
  */
-function setupLocationEventHandlers() {
-  const location_chart = document.getElementById('location-chart');
+function displayLocationHistory(locationElement) {
+  const locationGraph = document.getElementById('location-graph');
+
+  locationGraph.querySelectorAll('.location-graph-bar').forEach((bar) => {
+    for (nextLocation in measurementData[bar.dataset.date]) {
+      if (!locationElement.id.endsWith(nextLocation)) {
+        continue;
+      }
+
+      let measurement = measurementData[bar.dataset.date][nextLocation];
+      let measurementStyle = LEVELS[measurementLevel(measurement)];
+      bar.style.backgroundColor = measurementStyle[0];
+      bar.style.height = (20 / measurementData[bar.dataset.date][nextLocation] * 100) + 'px';
+      break;
+    }
+  });
+}
+
+/**
+ * Set up the bar graph that is displayed when a location is selected. The bar
+ * graph displays historical water quality measurements for a specific location.
+ */
+function setupLocationBarGraph() {
+  const locationGraph = document.getElementById('location-graph');
+
+  for (nextDate in measurementData) {
+    var bar = document.createElement("div");
+    bar.classList.add('location-graph-bar')
+    bar.dataset.date = nextDate;
+    locationGraph.appendChild(bar);
+  }
 
   // Find all locations on the map
   // TODO: change this to find location labels, not the circles
   document.querySelectorAll('circle[id ^= "location-"]').forEach((location) => {
     location.onclick = function (e) {
-      location_chart.classList.remove('hidden');
-      location_chart.style.left = e.target.getBoundingClientRect().x + 'px';
-      location_chart.style.top =  e.target.getBoundingClientRect().y + 'px';
+      const location = e.target;
+      const location_rect = location.getBoundingClientRect();
+      const x = location_rect.x;
+      const y = location_rect.y + location_rect.height;
+      locationGraph.classList.remove('invisible');
+      locationGraph.style.left = x +  'px';
+      locationGraph.style.top = y + 'px';
+      displayLocationHistory(e.target);
     };
   });
-
-  // Allow the location chart to be closed
-  // TODO: add some sort of close button to the location chart box
 }
 
 /**
  * Change the content of the sidebar when menu items are clicked.
+ * @param {String} targetName The name of the element in the menu that was
+ *  clicked.
  */
 function menuItemSelected(targetName) {
   // Hide all other sidebar content
@@ -151,17 +184,17 @@ function createYearChartDiv(year) {
   yearDiv.classList.add('chart-year');
   yearDiv.innerText = year;
 
-  let barGraphDiv = document.createElement('div');
-  barGraphDiv.classList.add('bar-graph')
-  yearDiv.appendChild(barGraphDiv);
+  let chartDiv = document.createElement('div');
+  chartDiv.classList.add('chart')
+  yearDiv.appendChild(chartDiv);
 
   return yearDiv;
 }
 
 /**
- * Create the bar graphs that display the most common measurement levels per year.
+ * Create the chart that displays the most common measurement levels per year.
  */
-function populateBarGraph() {
+function populateChart() {
   years.forEach((year) => {
     let yearDiv = createYearChartDiv(year);
 
@@ -169,10 +202,10 @@ function populateBarGraph() {
       let paddedMonth = month <= 9 ? `0${month}` : month;
       let date = `${year}-${paddedMonth}`;
 
-      // Create an individual bar element
+      // Create an individual chart element
       let monthDiv = document.createElement('div');
       monthDiv.id = date;
-      monthDiv.classList.add('bar');
+      monthDiv.classList.add('chart-item');
       yearDiv.firstElementChild.appendChild(monthDiv);
 
       let mostCommonLevel = mostCommonLevelForDate(date);
@@ -255,11 +288,11 @@ fetchMeasurementDataAsync().then(data => {
   });
 
   // Display the summary of the measurements over time
-  populateBarGraph();
+  populateChart();
 
   // Display the latest measurements on the map
   handleDateChanged(sortedDates[sortedDates.length - 1]);
 
-  // Set up event handlers for each location on the map
-  setupLocationEventHandlers();
+  // Set up the bar graph that is displayed for a location when selected
+  setupLocationBarGraph();
 });

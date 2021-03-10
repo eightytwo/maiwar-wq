@@ -75,10 +75,12 @@ svg {
   text-align: right;
 }
 
-#location-chart {
+#location-graph {
   position: absolute;
-  width: 250px;
-  height: 100px;
+  top: 0px;
+  left: 0px;
+  /*width: 300px;
+  height: 50px;*/
   border: 1px solid #000;
 }
 
@@ -87,17 +89,24 @@ svg {
   font-weight: bold;
 }
 
-.bar-graph {
+.chart {
   display: flex;
   flex-direction: row;
 }
 
-.bar {
+.chart-item {
   width: 0.8rem;
   height: 0.8rem;
   margin: 0 0.1rem;
   border: 1px solid transparent;
   cursor: pointer;
+}
+
+.location-graph-bar {
+  float: left;
+  width: 2px;
+  height: 20px;
+  background-color: red;
 }
 
 .menu-item {
@@ -110,6 +119,10 @@ svg {
 
 .hidden {
   display: none;
+}
+
+.invisible {
+  visibility: hidden;
 }
 
 .visible {
